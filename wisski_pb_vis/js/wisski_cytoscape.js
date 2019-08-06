@@ -4,6 +4,7 @@
      // alert(drupalSettings.wisski.vis.data); //alerts the value of PHP's $value
      //get data from controller  
      var json_data = drupalSettings.wisski.vis.data;
+     //$.getJSON("https://testrakete.gnm.de/sites/default/files/2019-06/path_example.json", function (json_data) {
      //initialize container "viewer" for library cytoscape.  
      var cy = cytoscape({
                container: document.getElementById("viewer"),
@@ -51,7 +52,7 @@
              //alert(cy);        
              //console.log(cy);
        cy.ready();                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
-          
+      //});     
      }
     };
  })(jQuery, Drupal, drupalSettings);

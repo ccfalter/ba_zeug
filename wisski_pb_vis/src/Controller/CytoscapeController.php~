@@ -34,27 +34,105 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
      }
      public function getJson(Response $re) {
        $json_data = $re->get();
-      // dpm($json_data, "Hallo");
+//       dpm($json_data, "Hallo");
        return new JsonResponse();
      }       
 //     public function getUrlForData(Url $url){
 //      $template_data = $url;
 //     }
   /**
-   Get xml file and parse to json. Delivers json-data to drupal.settings and
-   visualize Graph with cytoscape.js
+   Define Container and Style for Cytoscape library
+   and Visualize Graph
   **/
      public function start() {
           //test: direct url load, parse xmlfile to json and give it to drupalSettings 
            $url = "https://testrakete.gnm.de/sites/default/files/2019-06/hauptpb_20170810T110118.xml";
            $xmlfile = file_get_contents($url);
            $xml2object =  simplexml_load_string($xmlfile);
+           //json_encode destroys xml-structure of path_array: multiple values for x and y
            $object2json  = json_encode($xml2object);
+           //dpm($object2json, 'bu');
+           $size_arr_x = 0;
+           $size_arr_y = 0;
+           //xpath destroys xml-structure of path_array: multiple values for x and y
+           $result = $xml2object->xpath('/pathbuilderinterface/path/path_array');
+           //dpm($result, 'path');
+           $counter_of_children = 0;
+           $counter_of_paths = 0;
+           $children_infos_array = array();
+           foreach($result as $r){
+            $name_path_array = $r->getName();
+            $r->addAttribute('path_array_id',  $counter_of_paths);
+            $counter_of_path_elements = 0;
+           //each children is a SimpleXMLElement with datatype string
+             foreach($r as $children){
+             
+             $path_array_number = Intval($r->attributes()->__toString());
+             $name_element = $children->getName();
+            //returns each concepts and properties as string
+             
+             $children_infos = array($path_array_number,$counter_of_path_elements, $name_element, $children->__toString());
+             $children_infos_array[$counter_of_children]= $children_infos;
+             //dpm($children, 'children');
+             
+             //dpm($children_infos, 'children infos');
+             $counter_of_path_elements++;
+             $counter_of_children++;
+              
+             }
+              //dpm($name_path_array, 'path array');
+            //$r->addChild('path_infos', $child->__toString());
+            //}
+             $counter_of_paths++;
+             
+           }
+           //dpm($children_infos_array, 'children arrays');
+           /*
+           foreach($children_infos_array as $infos){
+             if($children_infos_array[2] == 'y'){
+              $size_arr_y++;
+             }
+             else{
+              $size_arr_x++;
+             }
+           }*/
+           $arr_x = array();
+           $arr_y = array(); 
+           $j = 0;         
+           $k = 0;   
+           for($i = 0; $i < sizeof($children_infos_array); $i++){
+            
+             if(!($children_infos_array[$i][1]%2)){
+               $arr_y[$j] =  [ 'data'=>
+                                ['id'=>  $children_infos_array[$i][3], //$i
+                                 'label' => $children_infos_array[$i][3], 
+                                 'source'=> $children_infos_array[$i-1][3],//$i-1
+                                 'target'=> $children_infos_array[$i+1][3] //$i+1
+                                ]
+                             ];
+               $j++;                                                                                                                                                                              
+             }
+            else{
+              $arr_x[$k] = [ 'data' =>
+                                ['id' =>  $children_infos_array[$i][3], //$i
+                                 'label' =>  $children_infos_array[$i][3],
+                                ]
+                             ];
+              $k++;                                                                                                                           
+            }
+           
+         // }
+           $json_structure_oyto = ['nodes'=> $arr_x, 'edges' => $arr_y];
+           dpm($json_structure_oyto, 'passt');
+       /*
+             
            $json2phparray = json_decode($object2json,true);
            $nodes = array();
            $edges = array();
            $path_arrays = array();
            $pathentries = $json2phparray['path'];
+           // $tmp = array();
+           //get every path_array in pathbuilder_template
             foreach ($pathentries as $pathkey => $path_table) {
               foreach ($path_table  as $rowkey => $row){
                 if($rowkey == 'path_array'){
@@ -68,6 +146,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
            $x_array= array();
            $y_array = array();
            for($i = 0; $i < count($path_arrays); $i++){
+           
              //only one node in the path
              if(count($path_arrays[$i]) == 1){
                 $x_array[$i] = ['data' =>['id' => $path_arrays[$i]['x'], 'label' => $path_arrays[$i]['x']]];
@@ -91,41 +170,74 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
                           'source'=> $path_arrays[$i]['x'][0],
                           'target'=>$path_arrays[$i]['x'][1]
                            ]
-                          ];
+                         ] ;
               //  dpm($x_array[$i], 'Fall 2');
              //  dpm($y_array[$i], 'Fall 2');
             }
-            else{ //pathlength >=3
+            //else{ //pathlength >=3
               for($j = 0; $j < count($path_arrays[$i]['x']); $j++){
-                
-                $x_array[$i] = [ 'data' =>
+                if(count($path_arrays[$i]) == 1){
+                  $x_array[$i] = [ 'data' =>
+                               ['id' => $path_arrays[$i]['x'], 
+                               'label' => $path_arrays[$i]['x']
+                               ]
+                             ];
+                }
+                if(count($path_arrays[$i]['x']) == 2){
+                  
+                  $x_array[$i] = ['data'
+                                 => ['id' => $path_arrays[$i]['x'][$j],
+                                    'label'=> $path_arrays[$i]['x'][$j]
+                                    ]
+                                  ,
+                                  'data'
+                                  =>['id' => $path_arrays[$i]['x'][$j+1],
+                                 'label'=> $path_arrays[$i]['x'][$j+1]
+                                  ]
+                                  
+                                 ];
+                  $y_array[$i] = ['data'
+                                   =>['id'=> $path_arrays[$i]['y'],
+                                     'source'=> $path_arrays[$i]['x'][$j],
+                                     'target'=>$path_arrays[$i]['x'][$j+1]
+                                     ]
+                                 ];
+               }
+               else{ //todo!!
+                  $x_array[$i] = [ 'data' =>
                                ['id'=>$path_arrays[$i]['x'][$j],
                                 'label'=> $path_arrays[$i]['x'][$j]
                                 ]
-                               ];
+                             ];
                                                                                   
-                $y_array[$i] = ['data'
-                             =>['id'=> $path_arrays[$i]['y'][$j],
+                  $y_array[$i] = [ 'data'=>
+                                ['id'=> $path_arrays[$i]['y'][$j],
                                 'source'=> $path_arrays[$i]['x'][$j],
                                 'target'=> $x_path_arrays[$i]['x'][$j+1]
                                ]
-                              ];
+                             ];
                 //dpm($x_array[$i], 'Fall 3');
-                // dpm($y_array[$i], 'Fall 3');
-              }
-            }
-           $nodes = $x_array;
-           $edges = $y_array;
-           $jsonforcytoscape = ['nodes'=> $nodes, 'edges' => $edges];
+            //     dpm($y_array[$i], 'y');
+             //  }
+            // }
+             
+           */
+           // dpm($x_array, 'x da');
+           //$nodes = $x_array;
+           //$edges = $y_array;
+           //$jsonforcytoscape = ['nodes'=> $nodes, 'edges' => $edges];
           // dpm($jsonforcytoscape, 'am I CytoJSON?');
-           $json_file = json_encode($jsonforcytoscape);                                                                                                                                                                                                                                                                                                                                                                                                                            }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
-                    
+          
+         
+           $json_file = json_encode($json_structure_oyto);                                                                                                                                                                                                                                                                                                                                                                                                                            }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+           //dpm($json_file, 'tada');         
                       
            $form = array();               
            $form['#markup'] = '<div id="viewer"></div>'; 
            // style="height:500px;width:500px;"></div>';
            $form['#allowed_tags'] = array('div', 'select', 'option','a', 'script', 'style', 'height', 'width');
            $form['#attached']['library'][] = "wisski_pb_vis/vis";
+           $form['#attached']['drupalSettings']['wisski']['vis']['data'] = $json_file;
            
            /** $url = $form_state->getValue('url');
                $xmlfile = file_get_contents($url); 
@@ -145,13 +257,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
                $path_arrays = array();
                $pathentries = $json2phparray['path'];
           **/
- 
-           //delivers data to drupal.behaviour
-           $form['#attached']['drupalSettings']['wisski']['vis']['data'] = $json_file;
+           //$form['#attached']['drupalSettings']['vis']['data']= "wisski_pb_Vis/js/wisski_cytoscape.js";
+           //$form['#attached']['drupalSettings']['wisski']['vis']['data'] = $json_file;
            
-/** //All started with the code below. Can be ignored. It is similar to the Controller for cytoscape.js in test_visualisations module    
-
-     $response = new Response();
+/**           $response = new Response();
                $response->setContent('<!DOCTYPE html>
                    <html lang="en">
                      <head>
@@ -226,7 +335,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
                       </body>
                   </html>'
                   );
-   **/                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+   **/      // return false;
+           //dpm($form, 'w');                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
            return $form;
-        }                                                                                                                                                                                                                                                                   
+       }                                                                                                                                                                                                                                                                   
    }
