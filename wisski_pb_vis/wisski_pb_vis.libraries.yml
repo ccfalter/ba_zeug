@@ -1,0 +1,12 @@
+vis:
+  js:
+    /libraries/cytoscape/dist/cytoscape.min.js: {}
+    js/wisski_cytoscape.js: {}
+  css:
+    theme:
+      css/wisski_cytoscape.css: {}
+  dependencies:
+    - core/jquery
+    - core/drupalSettings
+    - core/drupal
+    - core/jquery.once

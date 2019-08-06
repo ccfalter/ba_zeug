@@ -1,0 +1,6 @@
+name: Test Visualisations
+description: Testes Visualisation libraries (for evaluation and creating a WissKI Pathbuilder Visualisation Modul).
+package: Custom
+
+type: module
+core: 8.x

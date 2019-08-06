@@ -1,0 +1,40 @@
+
+*** These modified files were found in JOE when it aborted on Fri Jul 19 15:00:05 2019
+*** JOE was aborted by UNIX signal 1
+
+*** File '(Unnamed)'
+vikus-viewer
+https://testrakete.gnm.de/libraries/vikus-viewer/css/
+https://testrakete.gnm.de/wisski/wisski_vikus/src/Controller/data/
+=>
+ 
+=> array(
+),
+=>
+=>
+array(
+
+*** File '(Unnamed)'
+script
+datas
+height
+log
+Log
+url
+Vis
+settings
+Setting
+Setting
+
+*** File '(Unnamed)'
+wisski_cytoscape.js
+wisski_cytoscape.js
+wisski_cytoscape.js
+wisski_pb_vis.libraries.yml
+wisski_pb_vis.libraries.yml
+wisski_cytoscape.js
+wisski_cytoscape.js
+wisski_cytoscape.js
+wisski_cytoscape.js
+Controller/CytoscapeController.php
+Controller/CytoscapeController.php

@@ -1,0 +1,28 @@
+test_visualisations.cytoscape:
+  path: '/cytoscape'
+  defaults:
+    _controller: '\Drupal\test_visualisations\Controller\CytoscapeController::start'
+    _title: 'Cytoscape Test'
+  requirements:
+    _access: 'TRUE'
+test_visualisations.visnetwork:
+  path: '/visnetwork'
+  defaults:
+    _controller: '\Drupal\test_visualisations\Controller\VisNetworkController::start'
+    _title: 'VisNetwork Test'
+  requirements:
+    _access: 'TRUE'
+test_visualisations.sigma:
+  path: '/sigma'
+  defaults:
+    _controller: '\Drupal\test_visualisations\Controller\SigmaController::start'
+    _title: 'Sigma Test'
+  requirements:
+    _access: 'TRUE'
+test_visualisations.d3:
+  path: '/d3'
+  defaults:
+    _controller: '\Drupal\test_visualisations\Controller\D3Controller::start'
+    _title: 'D3 Test'
+  requirements:
+    _access: 'TRUE'

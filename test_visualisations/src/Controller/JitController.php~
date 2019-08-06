@@ -1,0 +1,164 @@
+<?php
+
+namespace Drupal\test_visualisations\Controller;
+
+
+use Symfony\Component\HttpFoundation\Request; 
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;   
+use Drupal\Core\Entity\ContentEntityStorageInterface;
+use Drupal\Core\Form\FormStateInterface; 
+use Drupal\Core\Entity\ContentEntityForm;
+use Drupal\wisski_core;
+use Drupal\wisski_salz\AdapterHelper;
+use Drupal\wisski_salz\Plugin\wisski_salz\Engine\Sparql11Engine;
+use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Url; 
+use Drupal\Core\Link;
+use Drupal\wisski_core\WisskiCacheHelper;
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\OpenDialogCommand;
+use Drupal\Core\Ajax\OpenModalDialogCommand;
+use Drupal\Core\Form\FormBuilder;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
+
+
+/**
+ * Defines JitController class for pathbuilder visualisation.
+  */
+  class JitController extends ControllerBase {
+ 
+           
+  /**
+   Define Container and Style for Jit library
+   and Visualize Graph
+  **/
+     public function start() {           
+           $form = array();               
+           $form['#markup'] = '<div id="viewer"></div>';
+           $form['#allowed_tags'] = array('div', 'select', 'option','a', 'script');
+           $form['#attached']['library'][] = "test_visualisations/test_vis";
+           $response = new Response();
+               $response->setContent('<!DOCTYPE html>
+                   <html lang="en">
+                     <head>
+                           <title>Simple Viewer</title>
+                           <meta charset="UTF-8">
+                           <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                           <script src="/libraries/Jit/jit.js"></script>
+                           <script src="/libraries/Jit/Extras/excanvas.js"></script>
+                           <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+                     </head>
+                     <body>
+                        <div id="infovis"></div>  
+                        <script>
+                          function init(){
+                           $.getJSON("libraries/Jit/example.json", function (datas) {
+                            //console.log(data);
+                            var json_data = datas;
+                            var viz = new $jit.Viz({  
+                              injectInto: "infovis",  
+                                width: 500,  
+                                  height: 700  
+                                  });  
+                                  
+                             var rgraph = new $jitRGraph({  
+                               "injectInto": "infovis",  
+                                 //Optional: Add a background canvas  
+                                   //that draws some concentric circles.  
+                                     "background": {  
+                                        "CanvasStyles": {  
+                                            "strokeStyle": "#555",  
+                                                "shadowBlur": 50,  
+                                                    "shadowColor": "#ccc"  
+                                                     }  
+                                                    },  
+                                                                     //Nodes and Edges parameters  
+                                                                         //can be overridden if defined in   
+                                                                             //the JSON input data.  
+                                                                                 //This way we can define different node  
+                                                                                     //types individually.  
+                                                                                         Node: {  
+                                                                                                 "overridable": true,  
+                                                                                                          "color": "#cc0000"  
+                                                                                                              },  
+                                                                                                                  Edge: {  
+                                                                                                                          "overridable": true,  
+                                                                                                                                  "color": "#cccc00"  
+                                                                                                                                     },  
+                                                                                                                                          //Set polar interpolation.  
+                                                                                                                                              //Defaults linear.  
+                                                                                                                                                 interpolation: "polar",  
+                                                                                                                                                      //Change the transition effect from linear  
+                                                                                                                                                          //to elastic.  
+                                                                                                                                                             transition: $jit.Trans.Elastic.easeOut,  
+                                                                                                                                                                  //Change other animation parameters.  
+                                                                                                                                                                     duration:3500,  
+                                                                                                                                                                         fps: 30,  
+                                                                                                                                                                              //Change father-child distance.  
+                                                                                                                                                                                  levelDistance: 200,  
+                                                                                                                                                                                      //This method is called right before plotting  
+                                                                                                                                                                                          //an edge. This method is useful to change edge styles  
+                                                                                                                                                                                              //individually.  
+                                                                                                                                                                                                  onBeforePlotLine: function(adj){  
+                                                                                                                                                                                                          //Add some random lineWidth to each edge.  
+                                                                                                                                                                                                                  if (!adj.data.$lineWidth)   
+                                                                                                                                                                                                                              adj.data.$lineWidth = Math.random() * 5 + 1;  
+                                                                                                                                                                                                                                  },  
+                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                            onBeforeCompute: function(node){  
+                                                                                                                                                                                                                                                    Log.write("centering " + node.name + "...");  
+                                                                                                                                                                                                                                                              
+                                                                                                                                                                                                                                                                      //Make right column relations list.  
+                                                                                                                                                                                                                                                                              var html = "<h4>" + node.name + "</h4><b>Connections:</b>";  
+                                                                                                                                                                                                                                                                                      html += "<ul>";  
+                                                                                                                                                                                                                                                                                              node.eachAdjacency(function(adj){  
+                                                                                                                                                                                                                                                                                                          var child = adj.nodeTo;  
+                                                                                                                                                                                                                                                                                                                      html += "<li>" + child.name + "</li>";  
+                                                                                                                                                                                                                                                                                                                              });  
+                                                                                                                                                                                                                                                                                                                                      html += "</ul>";  
+                                                                                                                                                                                                                                                                                                                                              $jit.id("inner-details").innerHTML = html;  
+                                                                                                                                                                                                                                                                                                                                                  },  
+                                                                                                                                                                                                                                                                                                                                                      //Add node click handler and some styles.  
+                                                                                                                                                                                                                                                                                                                                                          //This method is called only once for each node/label crated.  
+                                                                                                                                                                                                                                                                                                                                                              onCreateLabel: function(domElement, node){  
+                                                                                                                                                                                                                                                                                                                                                                      domElement.innerHTML = node.name;  
+                                                                                                                                                                                                                                                                                                                                                                              domElement.onclick = function () {  
+                                                                                                                                                                                                                                                                                                                                                                                          rgraph.onClick(node.id, {   
+                                                                                                                                                                                                                                                                                                                                                                                                          hideLabels: false,  
+                                                                                                                                                                                                                                                                                                                                                                                                                          onComplete: function() {  
+                                                                                                                                                                                                                                                                                                                                                                                                                                              Log.write("done");  
+                                                                                                                                                                                                                                                                                                                                                                                                                                                              }  
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                          });  
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  };  
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          var style = domElement.style;  
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  style.cursor = "pointer";  
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          style.fontSize = "0.8em";  
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  style.color = "#fff";  
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      },  
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          //This method is called when rendering/moving a label.  
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              //This is method is useful to make some last minute changes  
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  //to node labels like adding some position offset.  
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      onPlaceLabel: function(domElement, node){  
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              var style = domElement.style;  
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      var left = parseInt(style.left);  
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              var w = domElement.offsetWidth;  
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      style.left = (left - w / 2) + "px";  
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          }  
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          });  
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          //load graph.  
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          rgraph.loadJSON(json_data, 1);  
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            //compute positions and plot  
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            rgraph.refresh();  
+                             
+                                  }); }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+                          </script>
+                      </body>
+                  </html>'
+                  );
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+           return $response;
+        }                                                                                                                                                                                                                                                                   
+   }

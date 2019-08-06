@@ -1,0 +1,41 @@
+
+*** These modified files were found in JOE when it aborted on Tue Jul 16 10:05:08 2019
+*** JOE was aborted by UNIX signal 1
+
+*** File '(Unnamed)'
+vikus-viewer
+https://testrakete.gnm.de/libraries/vikus-viewer/css/
+https://testrakete.gnm.de/wisski/wisski_vikus/src/Controller/data/
+=>
+ 
+=> array(
+),
+=>
+=>
+array(
+
+*** File '(Unnamed)'
+network
+edges
+getAttrib
+json
+script
+datas
+height
+log
+Log
+url
+
+*** File '(Unnamed)'
+wisski_jit/src/Controller/Sparql11GraphTabController.php
+wisski_mirador.js
+views/style/WisskiMirador.php
+MiradorController.php
+views-view-wisskimirador.html.twig
+wisski_mirador.routing.yml
+wisski_mirador.module
+wisski_mirador.libraries.yml
+CytoscapeController.php
+CytoscapeController.php
+CytoscapeForm.php
+CytoscapeForm.php

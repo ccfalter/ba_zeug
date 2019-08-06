@@ -1,0 +1,8 @@
+name: WissKI PB Vis Module
+description: A visualisation Module using Cytoscape for WissKI Pathbuilder Template
+core: 8.x
+package: WissKI
+version: 0.1-dev
+type: module
+libraries:
+ - wisski_pb_vis/Vis
