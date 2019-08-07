@@ -1,7 +1,0 @@
-div#viewer {
-   width:  800px;
-   height: 700px;
-   position: absolute;
-   display: block;
-}
-
