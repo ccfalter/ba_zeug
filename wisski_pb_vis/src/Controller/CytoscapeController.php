@@ -41,8 +41,8 @@ use Drupal\Component\Serialization\Json;
 //      $template_data = $url;
 //     }
   /**
-   Define Container and Style for Cytoscape library
-   and Visualize Graph
+   *   Define form for Container, Get URL of XML pathbuildertemplate, Parse XML to JSON for Cytoscape library
+   *   and Visualize Graph.
   **/
      public function start() {
           //test: direct url load, parse xmlfile to json and give it to drupalSettings 
