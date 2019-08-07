@@ -22,7 +22,7 @@ use Drupal\Core\Ajax\OpenModalDialogCommand;
 use Drupal\Core\Form\FormBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-
+use Drupal\Component\Serialization\Json;
 
 /**
  * Defines CytoscapeController class for pathbuilder visualisation.
@@ -41,19 +41,22 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 //      $template_data = $url;
 //     }
   /**
-  *   Define Container and Style for Cytoscape library
-  *   and Visualize Graph
+   Define Container and Style for Cytoscape library
+   and Visualize Graph
   **/
      public function start() {
           //test: direct url load, parse xmlfile to json and give it to drupalSettings 
-           $url = "https://testrakete.gnm.de/sites/default/files/2019-06/hauptpb_20170810T110118.xml";
+           //$url = "https://testrakete.gnm.de/sites/default/files/2019-06/hauptpb_20170810T110118.xml";
+           $url = "https://testrakete.gnm.de/sites/default/files/2019-08/personen_institute_sammlungen_20190807T092054.xml";
+          // $url = "http://objekte-im-netz.fau.de/projekt/sites/default/files/pathbuilder-template/med_sammlungsspezifika_20180829T103604.xml";
            $xmlfile = file_get_contents($url);
            $xml2object =  simplexml_load_string($xmlfile);
            //json_encode destroys xml-structure of path_array: multiple values for x and y
+           
            $object2json  = json_encode($xml2object);
            //dpm($object2json, 'bu');
-           $size_arr_x = 0;
-           $size_arr_y = 0;
+           //$size_arr_x = 0;
+           //$size_arr_y = 0;
            //xpath destroys xml-structure of path_array: multiple values for x and y
            $result = $xml2object->xpath('/pathbuilderinterface/path/path_array');
            //dpm($result, 'path');
@@ -86,7 +89,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
              $counter_of_paths++;
              
            }
-           //dpm($children_infos_array, 'children arrays');
+         // dpm($children_infos_array, 'children arrays');
            /*
            foreach($children_infos_array as $infos){
              if($children_infos_array[2] == 'y'){
@@ -102,9 +105,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
            $k = 0;   
            for($i = 0; $i < sizeof($children_infos_array); $i++){
             
-             if(!($children_infos_array[$i][1]%2)){
+             if(($children_infos_array[$i][1]%2)){
                $arr_y[$j] =  [ 'data'=>
-                                ['id'=>  $children_infos_array[$i][3], //$i
+                                ['id'=>  $i,// $children_infos_array[$i][3], //$i
                                  'label' => $children_infos_array[$i][3], 
                                  'source'=> $children_infos_array[$i-1][3],//$i-1
                                  'target'=> $children_infos_array[$i+1][3] //$i+1
@@ -121,12 +124,15 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
               $k++;                                                                                                                           
             }
            
-         // }
+          }
+          //dpm($arr_x, "nodes");
+         // dpm($arr_y, "edges");
            $json_structure_oyto = ['nodes'=> $arr_x, 'edges' => $arr_y];
-           dpm($json_structure_oyto, 'passt');
+#           dpm("nosebear, nosebear!");
+         // dpm($json_structure_oyto, 'passt');
        /*
-            
-          $json2phparray = json_decode($object2json,true);
+             
+           $json2phparray = json_decode($object2json,true);
            $nodes = array();
            $edges = array();
            $path_arrays = array();
@@ -229,14 +235,26 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
           // dpm($jsonforcytoscape, 'am I CytoJSON?');
           
          
-           $json_file = json_encode($json_structure_oyto);                                                                                                                                                                                                                                                                                                                                                                                                                            }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
-           //dpm($json_file, 'tada');         
+           $json_file = json_encode($json_structure_oyto);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+           // dpm($json_file, 'tada');         
                       
            $form = array();               
            $form['#markup'] = '<div id="viewer"></div>'; 
            // style="height:500px;width:500px;"></div>';
            $form['#allowed_tags'] = array('div', 'select', 'option','a', 'script', 'style', 'height', 'width');
            $form['#attached']['library'][] = "wisski_pb_vis/vis";
+
+           
+
+#           $url = "https://testrakete.gnm.de/sites/default/files/2019-06/path_example.json";
+#           $json_file = file_get_contents($url);
+           $json_file = Json::decode($json_file);
+#           dpm($json_file, "file?");
+//           $json_file =  simplexml_load_string($xmlfile);
+                   
+//           $json_file = json_encode($xml2object);
+
+
            $form['#attached']['drupalSettings']['wisski']['vis']['data'] = $json_file;
            
            /** $url = $form_state->getValue('url');
