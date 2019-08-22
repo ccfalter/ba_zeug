@@ -52,7 +52,7 @@ use Drupal\Component\Serialization\Json;
        $object2json  = json_encode($xml2object);
        //dpm($object2json, 'bu');
            
-       //xpath destroys xml-structure of path_array: multiple values for x and y
+       //convert to xpath: structure of path_array is like source. 
        $result = $xml2object->xpath('/pathbuilderinterface/path/path_array');
        //dpm($result, 'path');
        $counter_of_children = 0;
@@ -90,9 +90,10 @@ use Drupal\Component\Serialization\Json;
        for($i = 0; $i < sizeof($children_infos_array); $i++){
             
          if(($children_infos_array[$i][1]%2)){
+           
            $arr_y[$j] = ['data'=>
                           ['id'=> $i,
-                           'label' => $children_infos_array[$i][3], 
+                           'label' => basename($children_infos_array[$i][3]), 
                            'source'=> $children_infos_array[$i-1][3],
                            'target'=> $children_infos_array[$i+1][3] 
                            ]
@@ -102,13 +103,15 @@ use Drupal\Component\Serialization\Json;
          else{
            $arr_x[$k] = ['data' =>
                           ['id' =>  $children_infos_array[$i][3], 
-                           'label' =>  $children_infos_array[$i][3]
+                           'label' =>  basename($children_infos_array[$i][3])
                           ]
                         ];
            $k++;                                                                                                                           
          }
            
-       }     
+       }
+       
+           
        //dpm($arr_x, "nodes");
        //dpm($arr_y, "edges");
        $json_structure_oyto = ['nodes'=> $arr_x, 'edges' => $arr_y];
