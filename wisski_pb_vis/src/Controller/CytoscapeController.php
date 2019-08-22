@@ -111,7 +111,7 @@ use Drupal\Component\Serialization\Json;
        }     
        //dpm($arr_x, "nodes");
        //dpm($arr_y, "edges");
-       $json_structure_oyto = ['nodes'=> $arr_x, 'edges' => $arr_y);
+       $json_structure_oyto = ['nodes'=> $arr_x, 'edges' => $arr_y];
        //dpm($json_structure_oyto, 'passt');
         
        $json_file = json_encode($json_structure_oyto);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
