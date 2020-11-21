@@ -10,3 +10,5 @@ wisski_pb_vis.mainpage:
     _controller: 'Drupal\wisski_pb_vis\Controller\CytoscapeController::start'
   requirements:
     _access: 'TRUE'
+  options:
+    no_cache: 'TRUE'
