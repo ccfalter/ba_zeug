@@ -39,7 +39,7 @@ INSTALLATION AND CONFIGURATION
 LIBRARIES/AUTHORS
 ------------------
 
-test_visualisations by Corina Lehmann
+test_visualisations by ccfalter
 
 Further Informations about the libraries:
  
