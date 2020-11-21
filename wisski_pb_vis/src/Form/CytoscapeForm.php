@@ -14,19 +14,6 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class CytoscapeForm extends FormBase
 {
-
-    /** public function __construct(FormBuilder $formBuilder) {
-    $this->formBuilder = $formBuilder;
-    }
-
-    public static function create(ContainerInterface $container) {
-    return new static($container->get('form_builder'));
-    }
-
-    public static function getRequest(Request $request){
-    return $request;
-    }
-     **/
     public function getFormId()
     {
         return 'wisski_pb_vis';
