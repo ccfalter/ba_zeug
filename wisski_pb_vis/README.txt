@@ -22,14 +22,6 @@ form and then delivered to the drupalbehaviour per drupal.settings. There
 the container for Cytoscape is initialised and the result returned to the
 Controller for visualisation in WissKI.
 
-At current:
-The forwarding of data between submitpage and drupal.behaviour does not
-work. 
-Therefore the module concept was changed for the Bachelor thesis. The
-Controller should get and parse the XML-File directly and deliver the result to the
-drupal-behaviour. Then the container is initialised for the library and the
-result returned to the controller.
-
 REQUIREMENTS
 ------------
 * Drupal
