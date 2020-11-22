@@ -243,6 +243,10 @@
                 //Button reset_layout gets the function to reset the graph without toggling beetween 'nodeDimensionsIncludeLabels' true and false
                 document.getElementById("reset_layout").onclick = function() {
                     layout_breadthfirst_nodeDimensionsIncludeLabels_true.run();
+                    boolean_circle_layout = false;
+                    document.querySelector('#circle_layout').innerText = 'Toggle Circle Layout';
+                    toogle_label_overlap = true;
+                    document.querySelector('#label_overlap').innerText = 'Allow label overlap';
                     cy.fit();
                 };
 
