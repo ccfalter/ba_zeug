@@ -12,8 +12,6 @@ This module is a prototyp. It was developed as part of the Bachelor thesis
 for the visualization of pathbuilder templates in WissKI. The library
 Cytoscape.js was used for the visualisation. 
 It currently consists of a submitpage, a controller and a drupal behaviour.
-Due to difficulties at the end of the Bachelor thesis the development of the
-prototyp is not terminated. 
 
 original concept: 
 The user submit a XML-file of the pathbuildertemplate at
